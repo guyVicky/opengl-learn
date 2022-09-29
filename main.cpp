@@ -79,9 +79,9 @@ int main()
     // creating buffers to transfer vertices
 
     float triangle[] = {
-        -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        0.0f, 0.5f, 0.0f};
+        0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.5f, 0.0f, 0.0f};
 
     unsigned int VAO;
     glGenVertexArrays(1, &VAO);
@@ -101,6 +101,9 @@ int main()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     glBindVertexArray(0);
+
+    // set polygon mode 🔺
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     while (!glfwWindowShouldClose(window))
     {
