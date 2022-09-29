@@ -1,3 +1,5 @@
 # opengl-learn
 
-Fun project to tinker around with my graphics card
+Fun project to tinker around
+
+Download and execute *a.exe* to run the program
