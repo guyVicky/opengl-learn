@@ -40,25 +40,6 @@ int main()
         return -1;
     }
 
-    // creating buffers to transfer vertices
-    float triangle[] = {
-        0.1f, 0.1f, 0.0f,
-        0.1f, -0.1f, 0.0f,
-        -0.1f, 0.4f, 0.0f};
-
-    unsigned int VBO;
-    glGenBuffers(1, &VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    // transfer data to buffer
-    glBufferData(GL_ARRAY_BUFFER, sizeof(triangle), triangle, GL_STATIC_DRAW);
-
-    // vertex shader defined here
-    unsigned int vertexShader;
-    vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    // compile shader
-    glCompileShader(vertexShader);
-
     // TESTING CODE !!! 👇 - do not remove
     // int success;
     // char infoLog[512];
@@ -69,6 +50,13 @@ int main()
     //     std::cout << "ERROR::LINKING_FAILED\n"
     //               << infoLog << std::endl;
     // }
+
+    // create vertex shader
+    unsigned int vertexShader;
+    vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+    // compile shader
+    glCompileShader(vertexShader);
 
     // create fragment shader
     unsigned int fragmentShader;
@@ -84,10 +72,44 @@ int main()
     glAttachShader(shaderProgram, fragmentShader);
     glLinkProgram(shaderProgram);
 
+    // delete unwanted shaders
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
+    // creating buffers to transfer vertices
+
+    float triangle[] = {
+        -0.5f, -0.5f, 0.0f,
+        0.5f, -0.5f, 0.0f,
+        0.0f, 0.5f, 0.0f};
+
+    unsigned int VAO;
+    glGenVertexArrays(1, &VAO);
+    unsigned int VBO;
+    glGenBuffers(1, &VBO);
+    glBindVertexArray(VAO);
+
+    // transfer data to buffer
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(triangle), triangle, GL_STATIC_DRAW);
+
+    // set Attributes of Vertex
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+    glEnableVertexAttribArray(0);
+
+    // unbind buffer
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glBindVertexArray(0);
+
     while (!glfwWindowShouldClose(window))
     {
         glClearColor(0.6f, 0.2f, 0.7f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        glUseProgram(shaderProgram);
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
