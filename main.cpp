@@ -14,6 +14,11 @@ const char *fragmentShaderSource = "#version 330 core\n"
                                    "void main() {\n"
                                    "FragColor = vec4(1.0f, 1.0f, 0.3f, 1.0f);\n"
                                    "}\0";
+const char *fragmentShaderSource2 = "#version 330 core\n"
+                                    "out vec4 FragColor;\n"
+                                    "void main() {\n"
+                                    "FragColor = vec4(0.0f, 1.0f, 0.3f, 1.0f);\n"
+                                    "}\0";
 void frame_size_callback(GLFWwindow *window, int width, int height);
 
 int main()
@@ -65,6 +70,13 @@ int main()
     // compile the shader
     glCompileShader(fragmentShader);
 
+    // shader #2
+    unsigned int fragmentShader2;
+    fragmentShader2 = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader2, 1, &fragmentShaderSource2, NULL);
+    // compile the shader
+    glCompileShader(fragmentShader2);
+
     // linking the shaders here and compiling them into a single program to execute when screen is visible
     unsigned int shaderProgram;
     shaderProgram = glCreateProgram();
@@ -72,16 +84,27 @@ int main()
     glAttachShader(shaderProgram, fragmentShader);
     glLinkProgram(shaderProgram);
 
+    unsigned int shaderProgram2;
+    shaderProgram2 = glCreateProgram();
+    glAttachShader(shaderProgram2, vertexShader);
+    glAttachShader(shaderProgram2, fragmentShader2);
+    glLinkProgram(shaderProgram2);
+
     // delete unwanted shaders
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
+    glDeleteShader(fragmentShader2);
 
     // creating buffers to transfer vertices
 
     float triangle[] = {
-        0.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f,
-        0.5f, 0.0f, 0.0f};
+        -1.0f, -1.0f, 0.0f,
+        -0.3f, 0.5f, 0.0f,
+        0.2f, -0.5f, 0.0f,
+        // yo
+        0.2f, -0.5f, 0.0f,
+        1.0f, 1.0f, 0.0f,
+        -0.3f, 0.5f, 0.0f};
 
     unsigned int VAO;
     glGenVertexArrays(1, &VAO);
@@ -113,6 +136,8 @@ int main()
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
+        glUseProgram(shaderProgram2);
+        glDrawArrays(GL_TRIANGLES, 3, 3);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
